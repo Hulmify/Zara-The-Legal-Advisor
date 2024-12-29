@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Zara: The Legal Advisor is a chatbot that provides legal advice."
+    />
+    <meta
+      name="keywords"
+      content="Zara, Legal Advisor, Chatbot, Legal Advice, Law, Legal"
+    />
+    <meta name="author" content="Hulmify" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Zara: The Legal Advisor" />
+    <meta name="application-name" content="Zara: The Legal Advisor" />
+    <title>Zara: The Legal Advisor | Hulmify</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: black;
+        background-image: url(https://picsum.photos/1280/750);
+        background-size: cover;
+        background-position: center;
+        image-rendering: -webkit-optimize-contrast;
+      }
+
+      .chat-container {
+        border-radius: 16px;
+        width: 100%;
+        max-width: 800px;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .chat-container * {
+        transition: all 0.3s ease;
+      }
+
+      .header {
+        background-color: rgba(37, 150, 190, 0.9);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.5rem;
+      }
+
+      .chat-area {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        border-bottom: 2px solid #ddd;
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .chat-bubble {
+        max-width: 100%;
+        margin-bottom: 15px;
+        padding: 8px 16px 8px 24px;
+        border-radius: 15px;
+        line-height: 1.5;
+        font-size: 1rem;
+      }
+
+      .user {
+        background-color: #fff;
+        border: 1px solid #4896bf;
+        align-self: flex-end;
+        text-align: right;
+      }
+
+      .bot {
+        position: relative;
+        align-self: flex-start;
+        text-align: left;
+      }
+
+      .bot::before {
+        content: "🤖";
+        position: absolute;
+        height: 24px;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+      }
+
+      .input-area {
+        padding: 16px;
+        border-top: 2px solid #ddd;
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .input-area input,
+      .input-area textarea {
+        padding: 12px;
+        min-width: 100%;
+        max-width: 100%;
+        font-size: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+      }
+
+      .input-area input:focus,
+      .input-area textarea:focus {
+        border-color: #ac48bf;
+      }
+
+      .input-area button {
+        width: 100%;
+        padding: 12px 16px;
+        background-color: #4896bf;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        max-height: 40px;
+        transition: background-color 0.3s ease;
+      }
+
+      .input-area button:disabled {
+        background-color: #ddd;
+        cursor: not-allowed;
+      }
+
+      .input-area button:hover {
+        background-color: #ac48bf;
+      }
+
+      .input-area button:hover:disabled {
+        background-color: #ddd !important;
+      }
+
+      @media (max-width: 600px) {
+        .chat-container {
+          height: 95vh;
+        }
+
+        .header {
+          font-size: 1.2rem;
+        }
+
+        .input-area input {
+          font-size: 0.9rem;
+        }
+
+        .input-area button {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+    <script>
+      // Generate a random session ID
+      const sessionId = Math.random().toString(36).substring(7);
+
+      // Lock the input field and the send button
+      const lockInput = () => {
+        document.getElementById("userInput").disabled = true;
+        document.getElementById("sendMessageClick").disabled = true;
+      };
+
+      // Unlock the input field and the send button
+      const unlockInput = () => {
+        document.getElementById("userInput").disabled = false;
+        document.getElementById("sendMessageClick").disabled = false;
+      };
+
+      // Function to send a message to the bot
+      async function sendMessage() {
+        const inputField = document.getElementById("userInput");
+        const chatArea = document.getElementById("chatArea");
+        const userMessage = inputField.value;
+
+        // Check if the user message is empty
+        if (!userMessage.trim()) return;
+
+        // Check if the input field is disabled
+        if (inputField.disabled) return;
+
+        // Add user message to chat
+        const userBubble = document.createElement("div");
+        userBubble.className = "chat-bubble user";
+        userBubble.textContent = userMessage;
+        chatArea.appendChild(userBubble);
+
+        // Clear input field
+        inputField.value = "";
+
+        // Get the bot's response
+        const analysingMessage = "Thinking...";
+
+        // Lock the input field and the send button
+        lockInput();
+
+        // Show bot's response as "Analyzing your question..."
+        const botBubble = document.createElement("div");
+        botBubble.className = "chat-bubble bot";
+        botBubble.textContent = analysingMessage;
+        chatArea.appendChild(botBubble);
+
+        // Scroll to the bottom
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+        // Set up the EventSource to handle the streaming response
+        const eventSource = new EventSource(
+          `http://localhost:8000/ask_stream/${sessionId}?question=${encodeURIComponent(
+            userMessage
+          )}`
+        );
+
+        // Has the bot responded
+        let botResponded = false;
+
+        // Variable to keep track of the current index of the bot's response
+        let currentIndex = 0;
+
+        // Variable to store the bot's response
+        let textMessage = "";
+
+        // Set an interval to check if the bot has responded
+        const interval = setInterval(() => {
+          // Check if the bot has responded
+          if (currentIndex < textMessage.length) {
+            // Add the bot's response to the chat
+            botBubble.innerHTML += textMessage[currentIndex] || "";
+
+            // Increment the index
+            currentIndex++;
+          } else if (botResponded) {
+            // Convert the text and keep html entities
+            const text = botBubble.innerText;
+
+            // Convert the markdown to HTML
+            botBubble.innerHTML = markdown.toHTML(text);
+
+            // Clear the interval if the bot has not responded
+            clearInterval(interval);
+          }
+        }, 25);
+
+        // Listen for 'message' events from the server (streamed responses)
+        eventSource.onmessage = function (event) {
+          // Set botResponded to true
+          botResponded = true;
+
+          // Remove the "Analyzing your question..." message
+          if (botBubble.textContent === analysingMessage) {
+            botBubble.textContent = "";
+          }
+
+          // Get the bot's response
+          const response = event.data;
+
+          // Close the connection if the bot's response is the final response
+          if (response.endsWith("END_STREAM")) {
+            // Close the connection
+            eventSource.close();
+
+            // Unlock the input field and the send button
+            unlockInput();
+            return;
+          }
+
+          // Add the bot's response to the chat
+          textMessage += response + " ";
+
+          // Scroll to the bottom after each update
+          chatArea.scrollTop = chatArea.scrollHeight;
+        };
+
+        // Handle any errors during the event stream
+        eventSource.onerror = function (error) {
+          // Log the error to the console
+          botBubble.textContent = "Error: Unable to get a response.";
+          eventSource.close(); // Close the connection on error
+
+          // Unlock the input field and the send button
+          unlockInput();
+        };
+
+        // Close the connection when the stream ends (optional)
+        eventSource.onclose = function () {
+          // Log a message to the console
+          console.log("Stream closed.");
+
+          // Unlock the input field and the send button
+          unlockInput();
+        };
+      }
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"
+      integrity="sha512-kaDP6dcDG3+X87m9SnhyJzwBMKrYnd2tLJjGdBrZ9yEL8Zcl2iJRsPwylLkbd2g3QC5S8efV3sgwI5r73U0HnA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="header">
+        <span>Zara: The Legal Advisor</span>
+      </div>
+      <div id="chatArea" class="chat-area"></div>
+      <div class="input-area">
+        <textarea
+          type="text"
+          id="userInput"
+          placeholder="Type your legal question here..."
+          onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"
+          multiple
+        ></textarea>
+        <button id="sendMessageClick" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </body>
+</html>
