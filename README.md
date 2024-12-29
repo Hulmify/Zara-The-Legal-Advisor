@@ -1,4 +1,4 @@
-# FastAPI Legal Assistant API
+# Zara: The Legal Advisor
 
 ## Overview
 
@@ -43,7 +43,7 @@ This FastAPI application serves as a backend for a legal assistant chatbot named
 1. Run the application:
 
    ```bash
-   python app.py
+   uvicorn main:app --workers=4
    ```
 
 2. Access the API:
