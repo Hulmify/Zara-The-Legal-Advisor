@@ -48,11 +48,11 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background-color: black;
-        background-image: url(https://picsum.photos/1280/750);
-        background-size: cover;
+        background-color: #424242;
+        background-image: url("public/bg.jpg");
+        background-repeat: no-repeat;
         background-position: center;
-        image-rendering: -webkit-optimize-contrast;
+        background-size: cover;
       }
 
       .chat-container {
@@ -73,14 +73,14 @@
       .header {
         background-color: rgba(37, 150, 190, 0.9);
         color: white;
-        padding: 20px;
+        padding: 16px;
         text-align: center;
         font-size: 1.5rem;
       }
 
       .chat-area {
         flex: 1;
-        padding: 20px;
+        padding: 16px;
         overflow-y: auto;
         border-bottom: 2px solid #ddd;
         background-color: rgba(255, 255, 255, 0.9);
@@ -88,18 +88,30 @@
 
       .chat-bubble {
         max-width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         padding: 8px 16px 8px 24px;
-        border-radius: 15px;
+        border-radius: 16px;
         line-height: 1.5;
         font-size: 1rem;
       }
 
       .user {
-        background-color: #fff;
-        border: 1px solid #4896bf;
+        position: relative;
         align-self: flex-end;
         text-align: right;
+        padding: 8px 24px 8px 16px;
+      }
+
+      .user::after {
+        content: "\f2bd";
+        font-family: "Font Awesome 6 Free";
+        position: absolute;
+        font-size: 16px;
+        height: 24px;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
       }
 
       .bot {
@@ -109,8 +121,10 @@
       }
 
       .bot::before {
-        content: "🤖";
+        content: "\5a";
+        font-family: "Font Awesome 6 Free";
         position: absolute;
+        font-size: 16px;
         height: 24px;
         top: 0;
         bottom: 0;
@@ -126,9 +140,8 @@
 
       .input-area input,
       .input-area textarea {
-        padding: 12px;
-        min-width: 100%;
-        max-width: 100%;
+        padding: 16px;
+        min-width: calc(100% - 40px);
         font-size: 1rem;
         border: 2px solid #ddd;
         border-radius: 8px;
@@ -143,7 +156,6 @@
       }
 
       .input-area button {
-        width: 100%;
         padding: 12px 16px;
         background-color: #4896bf;
         color: white;
@@ -151,7 +163,7 @@
         border-radius: 8px;
         font-size: 1rem;
         cursor: pointer;
-        max-height: 40px;
+        min-height: 40px;
         transition: background-color 0.3s ease;
       }
 
@@ -185,6 +197,74 @@
           font-size: 0.9rem;
         }
       }
+
+      .stack {
+        display: flex;
+      }
+
+      .stack-direction-row {
+        flex-direction: row;
+      }
+
+      .stack-direction-column {
+        flex-direction: column;
+      }
+
+      .stack-spacing-1 {
+        gap: 1rem;
+      }
+
+      .stack-spacing-2 {
+        gap: 2rem;
+      }
+
+      .stack-spacing-3 {
+        gap: 3rem;
+      }
+
+      .icon {
+        font-size: 16px;
+        color: #4896bf;
+        cursor: pointer;
+        transition: color 0.3s ease !important;
+      }
+
+      .icon:hover {
+        color: #ac48bf;
+      }
+
+      .icon[disabled] {
+        color: #ddd;
+        cursor: not-allowed;
+      }
+
+      .align-items-center {
+        align-items: center;
+      }
+
+      .justify-content-center {
+        justify-content: center;
+      }
+
+      .justify-content-end {
+        justify-content: flex-end;
+      }
+
+      .justify-content-start {
+        justify-content: flex-start;
+      }
+
+      .align-items-start {
+        align-items: flex-start;
+      }
+
+      .align-items-end {
+        align-items: flex-end;
+      }
+
+      .align-items-stretch {
+        align-items: stretch;
+      }
     </style>
     <script>
       // Generate a random session ID
@@ -192,14 +272,22 @@
 
       // Lock the input field and the send button
       const lockInput = () => {
-        document.getElementById("userInput").disabled = true;
-        document.getElementById("sendMessageClick").disabled = true;
+        document
+          .getElementById("userInput")
+          .setAttribute("disabled", "disabled");
+        document
+          .getElementById("sendMessageBtn")
+          .setAttribute("disabled", "disabled");
+        document
+          .getElementById("attachFileBtn")
+          .setAttribute("disabled", "disabled");
       };
 
       // Unlock the input field and the send button
       const unlockInput = () => {
-        document.getElementById("userInput").disabled = false;
-        document.getElementById("sendMessageClick").disabled = false;
+        document.getElementById("userInput").removeAttribute("disabled");
+        document.getElementById("sendMessageBtn").removeAttribute("disabled");
+        document.getElementById("attachFileBtn").removeAttribute("disabled");
       };
 
       // Function to send a message to the bot
@@ -332,6 +420,13 @@
       referrerpolicy="no-referrer"
       defer
     ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
   <body>
     <div class="chat-container">
@@ -340,14 +435,20 @@
       </div>
       <div id="chatArea" class="chat-area"></div>
       <div class="input-area">
-        <textarea
-          type="text"
-          id="userInput"
-          placeholder="Type your legal question here..."
-          onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"
-          multiple
-        ></textarea>
-        <button id="sendMessageClick" onclick="sendMessage()">Send</button>
+        <div
+          class="stack stack-direction-row stack-spacing-1 align-items-center"
+        >
+          <textarea
+            type="text"
+            id="userInput"
+            placeholder="Ask me anything..."
+            onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"
+            multiple
+          ></textarea>
+          <span id="sendMessageBtn" onclick="sendMessage()" class="icon">
+            <i class="fa-solid fa-paper-plane"></i>
+          </span>
+        </div>
       </div>
     </div>
   </body>
