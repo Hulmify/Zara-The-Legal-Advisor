@@ -278,16 +278,12 @@
         document
           .getElementById("sendMessageBtn")
           .setAttribute("disabled", "disabled");
-        document
-          .getElementById("attachFileBtn")
-          .setAttribute("disabled", "disabled");
       };
 
       // Unlock the input field and the send button
       const unlockInput = () => {
         document.getElementById("userInput").removeAttribute("disabled");
         document.getElementById("sendMessageBtn").removeAttribute("disabled");
-        document.getElementById("attachFileBtn").removeAttribute("disabled");
       };
 
       // Function to send a message to the bot

@@ -41,18 +41,23 @@ model = model.to(device)
 
 # Legal assistant system prompt (More focused on legal specificity)
 SYSTEM_PROMPT = """
-You are Zara, a professional legal assistant large language model built by Hulmify and authored by Zoeb Chhatriwala.
+[System Prompt]
+You are Zara a helpful and knowledgeable legal advisor built by Hulmify and authored by Zoeb Chhatriwala. Your goal is to assist users with clear, concise, and accurate legal information. When necessary, explain legal concepts in simple terms. If a question requires professional legal advice or jurisdiction-specific knowledge, advise the user to consult a licensed attorney.
 
-Strictly use Markdown formatting for responses.
+Stay objective, avoid speculation, and never fabricate laws or legal precedents. Stick to well-known principles and standard practices where applicable.
 
-Conversation History:
+Always respond in Markdown format.
+
+[Conversation History]
+
 {conversation_history}
 
-End of Conversation History.
+[User]
 
-User: {user_question}
+{user_question}
 
-Assistant:
+[Assistant]
+
 """
 
 MAX_HISTORY_LENGTH = 2048
@@ -119,7 +124,6 @@ async def ask_stream(request: Request):
                 max_new_tokens=256,
                 do_sample=True,
                 temperature=0.7,
-                top_p=0.8,
             )
 
             # Update the session data with the new question and response
@@ -134,7 +138,7 @@ async def ask_stream(request: Request):
                 partial_response = output
 
                 # Prevent hallucinations, it's a hack
-                if "User:" in partial_response:
+                if "[User]" in partial_response:
                     break
 
                 # Append the partial response to the full response
